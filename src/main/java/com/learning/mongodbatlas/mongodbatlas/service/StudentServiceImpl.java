@@ -15,6 +15,7 @@ import com.learning.mongodbatlas.mongodbatlas.enums.StudentType;
 import com.learning.mongodbatlas.mongodbatlas.enums.Subjects;
 import com.learning.mongodbatlas.mongodbatlas.model.Notes;
 import com.learning.mongodbatlas.mongodbatlas.model.Student;
+import com.learning.mongodbatlas.mongodbatlas.repository.AdministrationRepository;
 import com.learning.mongodbatlas.mongodbatlas.repository.CurriculumRepository;
 import com.learning.mongodbatlas.mongodbatlas.repository.StudentRepository;
 
@@ -26,6 +27,9 @@ public class StudentServiceImpl implements StudentService {
 
     @Autowired
     private CurriculumRepository curriculumRepository;
+
+    @Autowired
+    private AdministrationRepository administrationRepository;
 
     @Override
     public Optional<Student> getStudentByID(int Id, String password) {
@@ -66,13 +70,27 @@ public class StudentServiceImpl implements StudentService {
         student.setStudentId(random.nextInt((maxRange - minRange)) + minRange);
 
         // for assigning default values
+
+        // Set subjects according to std
+        student.setSubjects(curriculumRepository.findById(student.getStd()).get().getSubjects());
+
+        // Set Notes according to subjects / std
         LinkedHashMap<Subjects, LinkedList<Notes>> notesMap = new LinkedHashMap<>();
 
-        student.setSubjects(curriculumRepository.findById(student.getStd()).get().getSubjects());
         for (Subjects subject : student.getSubjects()) {
             notesMap.put(subject, new LinkedList<>());
         }
         student.setNotes(notesMap);
+
+        // set student fees according to category and std
+        for (Entry<StudentType, Double> entry : administrationRepository.findById(student.getStd()).get().getFees()
+                .entrySet()) {
+            if (student.getStudentType().equals(entry.getKey())) {
+                student.setFees(entry.getValue());
+            }
+        }
+
+        // storing student with all properties to MongoDB
         studentRepository.save(student);
         return "Student with StudentId:" + student.getStudentId() + " created successfully";
 

@@ -22,20 +22,27 @@ import lombok.ToString;
 @ToString
 public class Student {
 
+    // AutoAssigned
+
     @Id
     private int studentId = (int) Math.random();
 
-    private String studentName;
-
     private double fees;
-
-    private StudentType studentType;
-
-    private String password;
 
     private List<Subjects> subjects;
 
     private LinkedHashMap<Subjects, LinkedList<Notes>> notes;
 
+    // Getting from User during Registraion
+    private String studentName;
+
+    private StudentType studentType;
+
+    private String password;
+
     private int std;
+
+    private String emailId;
+
+    private long phoneNo;
 }

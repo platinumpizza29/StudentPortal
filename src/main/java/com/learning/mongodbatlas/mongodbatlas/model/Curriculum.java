@@ -1,6 +1,6 @@
 package com.learning.mongodbatlas.mongodbatlas.model;
 
-import java.util.List;
+import java.util.LinkedList;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -22,6 +22,6 @@ public class Curriculum {
     @Id
     private int std;
 
-    private List<Subjects> subjects;
+    private LinkedList<Subjects> subjects;
 
 }
