@@ -44,9 +44,6 @@
   align-items: center;
 }
 
-.imageDiv {
-}
-
 #image-boy {
   max-height: 23vh;
   object-fit: contain;
@@ -82,9 +79,6 @@
 
 #inbox-card {
   height: 100%;
-}
-
-#attendance-info {
 }
 
 #attendance-stat {
