@@ -15,6 +15,7 @@ import com.learning.mongodbatlas.mongodbatlas.enums.StudentType;
 import com.learning.mongodbatlas.mongodbatlas.enums.Subjects;
 import com.learning.mongodbatlas.mongodbatlas.model.Notes;
 import com.learning.mongodbatlas.mongodbatlas.model.Student;
+import com.learning.mongodbatlas.mongodbatlas.repository.CurriculumRepository;
 import com.learning.mongodbatlas.mongodbatlas.repository.StudentRepository;
 
 @Service
@@ -22,6 +23,9 @@ public class StudentServiceImpl implements StudentService {
 
     @Autowired
     private StudentRepository studentRepository;
+
+    @Autowired
+    private CurriculumRepository curriculumRepository;
 
     @Override
     public Optional<Student> getStudentByID(int Id, String password) {
@@ -54,11 +58,21 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public String addNewStudent(Student student) {
 
+        // for id generation
         int minRange = 10000;
         int maxRange = 99999;
         Random random = new Random();
 
         student.setStudentId(random.nextInt((maxRange - minRange)) + minRange);
+
+        // for assigning default values
+        LinkedHashMap<Subjects, LinkedList<Notes>> notesMap = new LinkedHashMap<>();
+
+        student.setSubjects(curriculumRepository.findById(student.getStd()).get().getSubjects());
+        for (Subjects subject : student.getSubjects()) {
+            notesMap.put(subject, new LinkedList<>());
+        }
+        student.setNotes(notesMap);
         studentRepository.save(student);
         return "Student with StudentId:" + student.getStudentId() + " created successfully";
 
