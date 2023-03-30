@@ -12,6 +12,8 @@ export default function NotesPage() {
   const [subjectNotes, setSubjectNotes] = useState([]);
   const { email } = useParams();
 
+  var sub;
+
   function MyEditor() {
     const [editorState, setEditorState] = React.useState(() =>
       EditorState.createEmpty()
@@ -21,7 +23,7 @@ export default function NotesPage() {
   }
 
   const getsubjects = async () => {
-    let uri = `https://3c14-49-36-48-153.in.ngrok.io/student/getsubjects?Id=${email}`;
+    let uri = `http://localhost:8080/student/getsubjects?Id=${email}`;
     var response = await axios.get(uri);
     var data = response.data;
     console.log(data);
@@ -29,13 +31,15 @@ export default function NotesPage() {
   };
 
   const getSubjectNotes = async (subject) => {
-    let uri = `https://3c14-49-36-48-153.in.ngrok.io/student/getnotesbysubject?Id=${email}&subjects=${subject}`;
+    let uri = `http://localhost:8080/student/getnotesbysubject?Id=${email}&subjects=${subject}`;
     var response = await axios.get(uri);
     var data1 = response.data;
     if (response.status === 200) {
       setSubjectNotes(data1);
     }
     console.log(data1);
+    sub = subject;
+    console.log(sub);
   };
 
   useEffect(() => {
@@ -75,15 +79,18 @@ export default function NotesPage() {
           </div>
         </Col>
         <Col span={19} id="col2">
-          {subjectNotes.map((note, index) => {
-            return (
-              <Card title={note.title} key={index} id="note-card-content">
-                <p>{note.content}</p>
-                {/* <textarea id="text-area"></textarea> */}
-                <MyEditor />
-              </Card>
-            );
-          })}
+          {subjectNotes != null ? (
+            subjectNotes.map((note, index) => {
+              return (
+                <Card title={note.title} key={index} id="note-card-content">
+                  <p>{note.content}</p>
+                  <MyEditor></MyEditor>
+                </Card>
+              );
+            })
+          ) : (
+            <h1>please select a subject</h1>
+          )}
         </Col>
       </Row>
     </div>

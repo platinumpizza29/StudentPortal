@@ -32,7 +32,7 @@ export default function LoginPage() {
   const authUser = async () => {
     if (email && password != null) {
       var response = await axios.get(
-        `https://3c14-49-36-48-153.in.ngrok.io/student/getstudentbyid?ID=${email}&password=${password}`
+        `https://dbe2-43-243-173-51.in.ngrok.io/student/getstudentbyid?ID=${email}&password=${password}`
       );
       if (response.status === 200) {
         var data = response.data;

@@ -1,0 +1,65 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto+Mono&family=Roboto:wght@500&display=swap");
+
+.LoginPage {
+  display: flex;
+  overflow-y: hidden;
+}
+
+.img {
+  height: 100vh;
+  width: 50vw;
+}
+
+#image {
+  height: 100vh;
+  width: 50vw;
+  object-fit: cover;
+  border-top-right-radius: 30px;
+  border-bottom-right-radius: 30px;
+}
+
+.form {
+  font-family: "Roboto Mono", monospace;
+  width: 50vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.form-contents {
+  width: 25vw;
+}
+
+@media screen and (max-width: 600px) {
+  .img {
+    display: none;
+  }
+
+  .form {
+    font-family: "Roboto Mono", monospace;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    padding: 30px;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    padding: 20px;
+  }
+
+  .form-contents {
+    width: 100vw;
+    padding: 20px;
+  }
+
+  #input {
+    width: 10vw;
+  }
+}
