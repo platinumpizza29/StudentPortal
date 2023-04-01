@@ -25,7 +25,7 @@ export default function HomePage() {
   const location = useLocation();
   const navigate = useNavigate();
   const name = location.state.studentName;
-  const id = location.state._id;
+  const { id } = useParams();
   const window_width = window.innerWidth;
   const formatter = (value) => <CountUp end={value} separator="," />;
 

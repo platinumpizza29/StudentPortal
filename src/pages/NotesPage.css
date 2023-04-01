@@ -1,0 +1,56 @@
+#notes-columns {
+  height: 100vh;
+  width: 100vw;
+}
+
+#notes-col1 {
+  padding: 20px;
+}
+
+#notes-col2 {
+  padding: 20px;
+}
+
+#notes-col3 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.note-options {
+  margin-top: 20px;
+}
+
+.heading {
+  font-family: "Roboto mono", monospace;
+}
+
+.subjects {
+  width: 100%;
+}
+
+#subject-cards {
+  display: flex;
+  flex-direction: row;
+  margin-top: 20px;
+}
+
+#note-card-content {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin: 20px;
+}
+
+#editor-card {
+  height: 90vh;
+  width: 100%;
+  padding: 20px;
+  font-family: "Roboto mono", monospace;
+}
+
+#deleteButton {
+  margin: 8px;
+}
