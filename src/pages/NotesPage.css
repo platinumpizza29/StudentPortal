@@ -7,6 +7,17 @@
   padding: 20px;
 }
 
+#notes-col2 {
+  padding: 20px;
+}
+
+#notes-col3 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
 .note-options {
   margin-top: 20px;
 }
@@ -25,17 +36,21 @@
   margin-top: 20px;
 }
 
-.col2 {
-  padding: 20px;
-}
-
 #note-card-content {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
   margin: 20px;
 }
 
-#text-area {
-  max-height: 20vh;
-  max-width: 100%;
+#editor-card {
+  height: 90vh;
+  width: 100%;
   padding: 20px;
   font-family: "Roboto mono", monospace;
+}
+
+#deleteButton {
+  margin: 8px;
 }

@@ -30,6 +30,14 @@ export default function RegisterPage() {
   const [userData, setUserData] = useState([]);
   const [number, setNumber] = useState(0);
   const [api, contextHolder] = notification.useNotification();
+  let formData = {
+    studentName: fullName,
+    studentType: category.toUpperCase(),
+    password: password,
+    std: parseInt(standard),
+    emailId: email,
+    phoneNo: parseInt(number),
+  };
 
   const Context = React.createContext({
     name: "Default",
@@ -71,24 +79,17 @@ export default function RegisterPage() {
   };
 
   const authUser = async () => {
-    var uri = "https://dbe2-43-243-173-51.in.ngrok.io/student/addstudent";
-    var response = await axios
-      .post(uri, {
-        studentName: fullName,
-        studentType: category.toUpperCase(),
-        password: password,
-        std: parseInt(standard),
-        emailId: email,
-        phoneNo: parseInt(number),
-      })
-      .catch((e) => {
-        console.log("====================================");
-        console.log(e);
-        console.log("====================================");
-      });
-    // if (response.status === 200) {
-    //   console.log(response.data);
-    // }
+    var uri =
+      "https://studentportalspringboot-production.up.railway.app/student/addstudent";
+    var response = await axios({
+      method: "POST",
+      url: uri,
+      data: formData,
+    });
+    if (response.status === 200) {
+      console.log(response.data);
+      navigate(`/${email}`, { state: response.data });
+    }
   };
 
   useEffect(() => {}, []);
@@ -132,6 +133,7 @@ export default function RegisterPage() {
             onChange={(e) => setStandard(e.target.value)}
           />
           <Input
+            required
             placeholder="+918888888888"
             type="text"
             style={{ padding: 10, marginBottom: 20 }}
@@ -154,7 +156,9 @@ export default function RegisterPage() {
           />
           <div id="options">
             <Checkbox onChange={onChange}>Remember Me</Checkbox>
-            <Button type="text">Forgot Password</Button>
+            <Button type="text" onClick={() => navigate("/login")}>
+              New User? Click Here...
+            </Button>
           </div>
           <Button
             type="primary"

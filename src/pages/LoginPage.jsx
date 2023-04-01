@@ -8,7 +8,7 @@ import axios from "axios";
 
 export default function LoginPage() {
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
+  const [id, setId] = useState("");
   const [password, setPassword] = useState("");
   const [userData, setUserData] = useState([]);
 
@@ -30,15 +30,15 @@ export default function LoginPage() {
   };
 
   const authUser = async () => {
-    if (email && password != null) {
+    if (id && password != null) {
       var response = await axios.get(
-        `https://dbe2-43-243-173-51.in.ngrok.io/student/getstudentbyid?ID=${email}&password=${password}`
+        `https://studentportalspringboot-production.up.railway.app/student/getstudentbyid?ID=${id}&password=${password}`
       );
       if (response.status === 200) {
         var data = response.data;
         console.log(data);
         setUserData(data);
-        navigate(`/${email}`, { state: data });
+        navigate(`/${id}`, { state: data });
       } else {
         openNotification("topLeft");
         navigate("/login");
@@ -61,11 +61,11 @@ export default function LoginPage() {
         <h1>Student App</h1>
         <div className="form-contents">
           <Input
-            placeholder="Email"
-            type="email"
+            placeholder="id"
+            type="id"
             style={{ padding: 10, marginBottom: 20, marginTop: 20 }}
             prefix={<MailFilled />}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => setId(e.target.value)}
           />
           <Input
             type="password"

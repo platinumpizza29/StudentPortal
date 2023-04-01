@@ -1,29 +1,75 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Editor, EditorState } from "draft-js";
+import { ContentState, Editor, EditorState, convertFromRaw } from "draft-js";
 import "./NotesPage.css";
-
-import { Row, Col, Button, Card, Descriptions } from "antd";
-import { CaretRightFilled } from "@ant-design/icons";
+import date from "date-and-time";
 import axios from "axios";
+
+import { Row, Col, Button, Card, Modal, Input } from "antd";
+import {
+  AlignLeftOutlined,
+  EditOutlined,
+  DeleteOutlined,
+} from "@ant-design/icons";
+import { CaretRightFilled } from "@ant-design/icons";
 
 export default function NotesPage() {
   const [subjects, setSubjects] = useState([]);
   const [subjectNotes, setSubjectNotes] = useState([]);
-  const { email } = useParams();
-
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [confirmLoading, setConfirmLoading] = useState(false);
+  const [notesTitle, setNotesTitle] = useState("");
+  const [notesContent, setNotesContent] = useState("");
+  const [getSelectedSubject, setSelectedSubject] = useState("");
+  const [selectedChapter, setSelectedChapter] = useState("");
+  const [selectedContent, setSelectedContent] = useState("");
+  const { id } = useParams();
+  const { Meta } = Card;
   var sub;
+
+  const now = new Date();
+  const currentDate = date.format(now, "YYYY-MM-DD").toString();
+  const formData = {
+    title: notesTitle,
+    content: notesContent,
+    date: currentDate,
+  };
+
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOk = async () => {
+    console.log(currentDate);
+    var uri = `https://studentportalspringboot-production.up.railway.app/student/addnewnotes?Id=${id}&subjects=${getSelectedSubject}`;
+    var response = await axios({
+      method: "POST",
+      url: uri,
+      data: formData,
+    });
+    if (response.status === 200) {
+      setIsModalOpen(false);
+      getSubjectNotes(getSelectedSubject);
+    } else {
+      setConfirmLoading(true);
+    }
+  };
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
 
   function MyEditor() {
     const [editorState, setEditorState] = React.useState(() =>
-      EditorState.createEmpty()
+      EditorState.createWithContent(
+        ContentState.createFromText(selectedContent)
+      )
     );
 
     return <Editor editorState={editorState} onChange={setEditorState} />;
   }
 
   const getsubjects = async () => {
-    let uri = `http://localhost:8080/student/getsubjects?Id=${email}`;
+    let uri = `https://studentportalspringboot-production.up.railway.app/student/getsubjects?Id=${id}`;
     var response = await axios.get(uri);
     var data = response.data;
     console.log(data);
@@ -31,7 +77,8 @@ export default function NotesPage() {
   };
 
   const getSubjectNotes = async (subject) => {
-    let uri = `http://localhost:8080/student/getnotesbysubject?Id=${email}&subjects=${subject}`;
+    setSelectedSubject(subject);
+    let uri = `https://studentportalspringboot-production.up.railway.app/student/getnotesbysubject?Id=${id}&subjects=${subject}`;
     var response = await axios.get(uri);
     var data1 = response.data;
     if (response.status === 200) {
@@ -46,21 +93,53 @@ export default function NotesPage() {
     getsubjects();
   }, []);
 
-  const onClick = (e) => {
-    console.log("click ", e);
+  const handleChapter = (content, title) => {
+    setSelectedChapter(title);
+    setSelectedContent(content);
   };
 
   return (
     <div className="NotesPage">
       <Row id="notes-columns">
-        <Col span={5} id="notes-col1">
+        <Col
+          span={5}
+          id="notes-col1"
+          style={{
+            borderRightStyle: "solid",
+            borderRadius: 20,
+            borderColor: "#d3d3d3 ",
+            borderWidth: 2,
+          }}
+        >
           <div className="heading">
-            <h1>Notes</h1>
+            <h1>Subjects</h1>
           </div>
           <div className="note-options">
-            <Button type="primary" block>
+            <Button type="primary" block onClick={showModal}>
               Create a new note
             </Button>
+            <Modal
+              title="New Note"
+              open={isModalOpen}
+              onOk={handleOk}
+              onCancel={handleCancel}
+              confirmLoading={confirmLoading}
+            >
+              <Input
+                type="text"
+                placeholder="Title"
+                style={{ padding: 10, marginBottom: 20 }}
+                prefix={<EditOutlined />}
+                onChange={(e) => setNotesTitle(e.target.value)}
+              />
+              <Input
+                type="content"
+                placeholder="content"
+                style={{ padding: 10, marginBottom: 20 }}
+                prefix={<AlignLeftOutlined />}
+                onChange={(e) => setNotesContent(e.target.value)}
+              />
+            </Modal>
           </div>
           <div className="subjects">
             {subjects.map((subject, index) => {
@@ -69,7 +148,7 @@ export default function NotesPage() {
                   key={index}
                   id="subject-cards"
                   hoverable
-                  prefix={<CaretRightFilled />}
+                  extra={<CaretRightFilled />}
                   onClick={() => getSubjectNotes(subject)}
                 >
                   <p>{subject}</p>
@@ -78,18 +157,48 @@ export default function NotesPage() {
             })}
           </div>
         </Col>
-        <Col span={19} id="col2">
+        <Col
+          span={5}
+          id="notes-col2"
+          style={{
+            borderRightStyle: "solid",
+            borderRadius: 20,
+            borderColor: "#d3d3d3 ",
+            borderWidth: 2,
+          }}
+        >
+          <div className="heading">
+            <h1>Notes</h1>
+          </div>
           {subjectNotes != null ? (
             subjectNotes.map((note, index) => {
               return (
-                <Card title={note.title} key={index} id="note-card-content">
-                  <p>{note.content}</p>
-                  <MyEditor></MyEditor>
+                <Card
+                  key={index}
+                  id="note-card-content"
+                  hoverable
+                  onClick={() => handleChapter(note.content, note.title)}
+                  actions={[
+                    <Button shape="circle" id="deleteButton">
+                      <DeleteOutlined />
+                    </Button>,
+                  ]}
+                >
+                  <Meta title={note.title} />
                 </Card>
               );
             })
           ) : (
             <h1>please select a subject</h1>
+          )}
+        </Col>
+        <Col span={14} id="notes-col3">
+          {selectedChapter != "" ? (
+            <Card title={selectedChapter} id="editor-card">
+              <MyEditor></MyEditor>
+            </Card>
+          ) : (
+            <h1>Please select chapter</h1>
           )}
         </Col>
       </Row>

@@ -25,7 +25,7 @@ export default function HomePage() {
   const location = useLocation();
   const navigate = useNavigate();
   const name = location.state.studentName;
-  const { email } = useParams();
+  const { id } = useParams();
   const window_width = window.innerWidth;
   const formatter = (value) => <CountUp end={value} separator="," />;
 
@@ -36,7 +36,7 @@ export default function HomePage() {
   const onClick = (e) => {
     console.log("click ", e);
     if (e.key === "3") {
-      navigate(`/${email}/notes`);
+      navigate(`/${id}/notes`);
     }
   };
 
