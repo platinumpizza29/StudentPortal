@@ -38,6 +38,7 @@ export default function LoginPage() {
         var data = response.data;
         console.log(data);
         setUserData(data);
+
         navigate(`/${id}`, { state: data });
       } else {
         openNotification("topLeft");
