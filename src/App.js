@@ -5,21 +5,28 @@ import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import NotesPage from "./pages/NotesPage";
 import RegisterPage from "./pages/RegisterPage";
+import PrivateRoutes from "./PrivateRoutes";
 
 function App() {
-  const [isAuth, setIsAuth] = useState(false);
+  const [isAuth, setIsAuth] = useState(true);
 
-  const handleLogin = () => {
+  function handleLogin() {
     setIsAuth(true);
-  };
+  }
 
   return (
     <Router>
       <Routes>
-        <Route path="/:id" element={<HomePage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="/:id/notes" element={<NotesPage />} />
+        <Route path="/StudentPortal" element={<LoginPage />} />
+        <Route element={<PrivateRoutes isAuth={isAuth} />}>
+          <Route path="/StudentPortal/:id" element={<HomePage />} />
+          <Route path="StudentPortal/:id/notes" element={<NotesPage />} />
+        </Route>
+        <Route
+          path="/StudentPortal/login"
+          element={<LoginPage handleLogin={handleLogin} />}
+        />
+        <Route path="/StudentPortal/register" element={<RegisterPage />} />
       </Routes>
     </Router>
   );

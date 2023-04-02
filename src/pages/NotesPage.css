@@ -54,3 +54,14 @@
 #deleteButton {
   margin: 8px;
 }
+
+.editor-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.editor {
+  margin-top: 2vh;
+  height: 78vh;
+}

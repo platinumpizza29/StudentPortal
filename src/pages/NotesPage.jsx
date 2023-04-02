@@ -4,6 +4,7 @@ import { ContentState, Editor, EditorState, convertFromRaw } from "draft-js";
 import "./NotesPage.css";
 import date from "date-and-time";
 import axios from "axios";
+import { animated, useSpring } from "@react-spring/web";
 
 import { Row, Col, Button, Card, Modal, Input } from "antd";
 import {
@@ -23,6 +24,8 @@ export default function NotesPage() {
   const [getSelectedSubject, setSelectedSubject] = useState("");
   const [selectedChapter, setSelectedChapter] = useState("");
   const [selectedContent, setSelectedContent] = useState("");
+  const [isVisible, setIsVisible] = useState(false);
+
   const { id } = useParams();
   const { Meta } = Card;
   var sub;
@@ -34,6 +37,7 @@ export default function NotesPage() {
     content: notesContent,
     date: currentDate,
   };
+  const props = useSpring({ opacity: isVisible ? 1 : 0 });
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -64,7 +68,6 @@ export default function NotesPage() {
         ContentState.createFromText(selectedContent)
       )
     );
-
     return <Editor editorState={editorState} onChange={setEditorState} />;
   }
 
@@ -83,6 +86,7 @@ export default function NotesPage() {
     var data1 = response.data;
     if (response.status === 200) {
       setSubjectNotes(data1);
+      setIsVisible(!isVisible);
     }
     console.log(data1);
     sub = subject;
@@ -106,7 +110,6 @@ export default function NotesPage() {
           id="notes-col1"
           style={{
             borderRightStyle: "solid",
-            borderRadius: 20,
             borderColor: "#d3d3d3 ",
             borderWidth: 2,
           }}
@@ -162,40 +165,47 @@ export default function NotesPage() {
           id="notes-col2"
           style={{
             borderRightStyle: "solid",
-            borderRadius: 20,
             borderColor: "#d3d3d3 ",
             borderWidth: 2,
           }}
         >
-          <div className="heading">
-            <h1>Notes</h1>
-          </div>
-          {subjectNotes != null ? (
-            subjectNotes.map((note, index) => {
-              return (
-                <Card
-                  key={index}
-                  id="note-card-content"
-                  hoverable
-                  onClick={() => handleChapter(note.content, note.title)}
-                  actions={[
-                    <Button shape="circle" id="deleteButton">
-                      <DeleteOutlined />
-                    </Button>,
-                  ]}
-                >
-                  <Meta title={note.title} />
-                </Card>
-              );
-            })
-          ) : (
-            <h1>please select a subject</h1>
-          )}
+          <animated.div style={props}>
+            <div className="heading">
+              <h1>Notes</h1>
+            </div>
+            {subjectNotes != null ? (
+              subjectNotes.map((note, index) => {
+                return (
+                  <Card
+                    key={index}
+                    id="note-card-content"
+                    hoverable
+                    onClick={() => handleChapter(note.content, note.title)}
+                    actions={[
+                      <Button shape="circle" id="deleteButton">
+                        <DeleteOutlined />
+                      </Button>,
+                    ]}
+                  >
+                    <Meta title={note.title} />
+                  </Card>
+                );
+              })
+            ) : (
+              <h1>please select a subject</h1>
+            )}
+          </animated.div>
         </Col>
         <Col span={14} id="notes-col3">
           {selectedChapter != "" ? (
-            <Card title={selectedChapter} id="editor-card">
-              <MyEditor></MyEditor>
+            <Card id="editor-card">
+              <div className="editor-card-header">
+                <Meta title={selectedChapter} />
+                <Button type="primary">Save</Button>
+              </div>
+              <div className="editor">
+                <MyEditor></MyEditor>
+              </div>
             </Card>
           ) : (
             <h1>Please select chapter</h1>
